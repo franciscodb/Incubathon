@@ -1,0 +1,12 @@
+# Configuración mínima del proyecto Supabase para el CLI.
+# Uso: `supabase link --project-ref <TU_REF>` y luego `supabase db push`.
+project_id = "buro-cumplimiento"
+
+[db]
+# Puerto local por defecto (solo para `supabase start`).
+port = 54322
+
+[auth]
+# Para el demo/hackathon conviene desactivar la confirmación por correo
+# para poder registrar e iniciar sesión de inmediato.
+enable_confirmations = false

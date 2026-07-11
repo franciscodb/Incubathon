@@ -1,0 +1,32 @@
+# Dependencias
+node_modules/
+**/node_modules/
+
+# Builds
+dist/
+frontend/dist/
+build/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.venv_check/
+venv/
+*.egg-info/
+
+# Entornos
+.env
+.env.*
+!.env.example
+
+# Supabase CLI
+.supabase/
+supabase/.branches/
+supabase/.temp/
+
+# Sistema / editor
+.DS_Store
+.vscode/
+.idea/
+*.log

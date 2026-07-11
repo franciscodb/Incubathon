@@ -1,0 +1,159 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-ink-50 text-ink-800 antialiased font-sans;
+    background-image:
+      radial-gradient(48rem 32rem at 12% -8%, rgba(109, 94, 252, 0.12), transparent 60%),
+      radial-gradient(42rem 30rem at 108% 4%, rgba(251, 124, 20, 0.10), transparent 55%);
+    background-attachment: fixed;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight text-ink-900;
+  }
+  ::selection {
+    background: rgba(109, 94, 252, 0.22);
+  }
+}
+
+@layer components {
+  /* ============ BOTONES ============ */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold
+           transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+           focus-visible:ring-brand-500/60 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-primary {
+    @apply btn text-white shadow-glow;
+    background-image: linear-gradient(135deg, #6d5efc 0%, #5b45f0 60%, #4d38d4 100%);
+  }
+  .btn-primary:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+  }
+  .btn-accent {
+    @apply btn text-white;
+    background-image: linear-gradient(135deg, #ff9838 0%, #fb7c14 60%, #ec6109 100%);
+    box-shadow: 0 12px 34px -12px rgba(251, 124, 20, 0.6);
+  }
+  .btn-accent:hover { filter: brightness(1.05); transform: translateY(-1px); }
+  /* Botón de vidrio translúcido */
+  .btn-glass {
+    @apply btn text-ink-800;
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 6px 20px -10px rgba(16, 20, 45, 0.25);
+  }
+  .btn-glass:hover { background: rgba(255, 255, 255, 0.72); transform: translateY(-1px); }
+  .btn-secondary {
+    @apply btn bg-white text-ink-700 ring-1 ring-ink-200 hover:bg-ink-50;
+  }
+  .btn-ghost {
+    @apply btn text-ink-600 hover:bg-ink-100;
+  }
+  .btn-danger {
+    @apply btn bg-rojo text-white hover:bg-rojo-dark;
+  }
+
+  /* ============ VIDRIO LÍQUIDO ============ */
+  .glass {
+    position: relative;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    box-shadow:
+      0 8px 32px -10px rgba(16, 20, 45, 0.24),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
+  }
+  /* Brillo especular superior */
+  .glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.85),
+      rgba(255, 255, 255, 0.05) 30%,
+      rgba(255, 255, 255, 0) 60%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  .glass-card {
+    @apply glass rounded-2.5xl;
+  }
+  /* Vidrio oscuro (sobre imágenes claras u oscuras) */
+  .glass-dark {
+    position: relative;
+    background: rgba(20, 18, 45, 0.42);
+    backdrop-filter: blur(22px) saturate(160%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow:
+      0 20px 60px -20px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
+  }
+
+  /* ============ TARJETAS ============ */
+  .card {
+    @apply rounded-2xl border border-ink-100 bg-white shadow-card transition-shadow;
+  }
+  .card-hover:hover {
+    @apply shadow-card-hover;
+    transform: translateY(-2px);
+  }
+
+  /* ============ INPUTS ============ */
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-ink-700;
+  }
+  .input {
+    @apply w-full rounded-xl border border-ink-200 bg-white/80 px-3.5 py-2.5 text-sm text-ink-900
+           shadow-sm outline-none transition placeholder:text-ink-400
+           focus:border-brand-400 focus:ring-4 focus:ring-brand-500/15;
+    backdrop-filter: blur(6px);
+  }
+  .select {
+    @apply input appearance-none pr-9;
+  }
+
+  /* ============ CHIPS / BADGES ============ */
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold;
+  }
+  .badge-glass {
+    @apply badge text-ink-700;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+  }
+}
+
+@layer utilities {
+  .container-app {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+  .text-gradient {
+    background-image: linear-gradient(120deg, #6d5efc 0%, #8b5cf6 40%, #fb7c14 110%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}

@@ -1,0 +1,271 @@
+{
+  "_comment": "Fuente de verdad del catálogo de trámites CDMX para Alimentos y Bebidas (A&B). Consumido por: SQL seed (supabase/migrations), backend rules engine (backend/app/rules_engine.py) y frontend mock (frontend/src/data/catalog.ts). Mantener sincronizado.",
+  "procedures": [
+    {
+      "code": "RFC_SAT",
+      "name": "Inscripción en el RFC (SAT)",
+      "authority": "Servicio de Administración Tributaria (SAT)",
+      "category": "fiscal",
+      "criticality": "alta",
+      "vigencia_meses": null,
+      "estimated_cost": "Gratuito",
+      "estimated_time": "1 día (cita en línea)",
+      "official_url": "https://www.sat.gob.mx/tramites/28753/inscribete-en-el-rfc-como-persona-fisica",
+      "description": "Registro fiscal obligatorio para poder facturar, emitir comprobantes y operar formalmente el establecimiento.",
+      "why": "Sin RFC no puedes emitir facturas, contratar personal formalmente ni acceder a otros permisos que lo solicitan como requisito previo.",
+      "steps": [
+        {"title": "Reúne tus documentos", "detail": "CURP, comprobante de domicilio fiscal (no mayor a 4 meses) e identificación oficial vigente."},
+        {"title": "Agenda tu cita", "detail": "Entra a citas.sat.gob.mx y selecciona 'Inscripción de personas físicas' o 'morales' según tu caso."},
+        {"title": "Acude a la oficina del SAT", "detail": "Lleva tus documentos originales; te entregarán tu Constancia de Situación Fiscal y contraseña."},
+        {"title": "Activa e.firma", "detail": "Solicita tu e.firma (firma electrónica) para trámites en línea posteriores."}
+      ]
+    },
+    {
+      "code": "AVISO_APERTURA",
+      "name": "Aviso de Apertura / Declaración de Apertura de Establecimiento Mercantil",
+      "authority": "SEDECO CDMX (Sistema Electrónico de Avisos y Permisos - SIAPEM)",
+      "category": "operacion",
+      "criticality": "alta",
+      "vigencia_meses": null,
+      "estimated_cost": "Gratuito",
+      "estimated_time": "Inmediato (en línea)",
+      "official_url": "https://siapem.cdmx.gob.mx/",
+      "description": "Aviso obligatorio ante el gobierno de la CDMX para operar un establecimiento mercantil de bajo impacto (la mayoría de restaurantes y cafeterías sin venta de alcohol).",
+      "why": "Es el documento que acredita que tu negocio está dado de alta legalmente ante la Ciudad. El INVEA lo verifica en inspecciones y su ausencia puede derivar en clausura.",
+      "steps": [
+        {"title": "Verifica el uso de suelo", "detail": "Confirma que el giro de alimentos y bebidas está permitido en tu ubicación (ver trámite de Uso de Suelo)."},
+        {"title": "Entra al SIAPEM", "detail": "Ingresa con tu Llave CDMX a siapem.cdmx.gob.mx y selecciona 'Declaración de Apertura'."},
+        {"title": "Captura los datos del establecimiento", "detail": "Giro, superficie, aforo, ubicación y datos del titular."},
+        {"title": "Descarga tu acuse", "detail": "El sistema genera un acuse con folio; imprímelo y tenlo visible en el establecimiento."}
+      ]
+    },
+    {
+      "code": "USO_SUELO",
+      "name": "Certificado Único de Zonificación de Uso de Suelo",
+      "authority": "SEDUVI CDMX",
+      "category": "inmueble",
+      "criticality": "alta",
+      "vigencia_meses": null,
+      "estimated_cost": "$300 - $1,200 MXN aprox.",
+      "estimated_time": "5 a 10 días hábiles",
+      "official_url": "https://www.seduvi.cdmx.gob.mx/",
+      "description": "Documento que certifica los usos de suelo permitidos en el predio donde operará el negocio. Determina si tu giro es viable en esa ubicación.",
+      "why": "Operar un giro no permitido en la zonificación es causa directa de negativa de permisos y de clausura. Es requisito previo para casi todos los demás trámites.",
+      "steps": [
+        {"title": "Identifica tu predio", "detail": "Ten a la mano la cuenta predial y la dirección exacta con número oficial."},
+        {"title": "Solicita el certificado en línea", "detail": "En el portal de SEDUVI selecciona 'Certificado Único de Zonificación de Uso de Suelo'."},
+        {"title": "Paga los derechos", "detail": "Genera la línea de captura y paga en el portal de Finanzas CDMX."},
+        {"title": "Descarga el certificado", "detail": "Revisa que el giro de alimentos y bebidas aparezca como permitido antes de firmar contratos."}
+      ]
+    },
+    {
+      "code": "AVISO_SANITARIO_COFEPRIS",
+      "name": "Aviso de Funcionamiento Sanitario (COFEPRIS)",
+      "authority": "COFEPRIS (Comisión Federal para la Protección contra Riesgos Sanitarios)",
+      "category": "sanitario",
+      "criticality": "alta",
+      "vigencia_meses": null,
+      "estimated_cost": "Gratuito",
+      "estimated_time": "Inmediato (en línea)",
+      "official_url": "https://www.gob.mx/cofepris",
+      "description": "Aviso obligatorio para establecimientos que procesan, preparan o expenden alimentos y bebidas. Acredita el cumplimiento de la normativa sanitaria federal.",
+      "why": "Todo establecimiento que maneja alimentos debe presentarlo. Su ausencia genera riesgos sanitarios y sanciones de COFEPRIS.",
+      "steps": [
+        {"title": "Prepara la información del giro", "detail": "Tipo de alimentos que manejas, procesos (preparación, expendio) y datos del responsable sanitario."},
+        {"title": "Entra al portal de COFEPRIS", "detail": "Selecciona 'Aviso de Funcionamiento y de Responsable Sanitario'."},
+        {"title": "Llena y envía el aviso", "detail": "Completa el formato electrónico; no requiere pago para el giro de A&B."},
+        {"title": "Resguarda tu acuse", "detail": "Guarda el acuse con folio; deberás mostrarlo en verificaciones sanitarias."}
+      ]
+    },
+    {
+      "code": "PROTECCION_CIVIL_PIPC",
+      "name": "Programa Interno de Protección Civil (PIPC)",
+      "authority": "Secretaría de Gestión Integral de Riesgos y Protección Civil (SGIRPC)",
+      "category": "proteccion_civil",
+      "criticality": "alta",
+      "vigencia_meses": 12,
+      "estimated_cost": "$8,000 - $25,000 MXN (elaborado por tercero acreditado)",
+      "estimated_time": "3 a 6 semanas",
+      "official_url": "https://www.proteccioncivil.cdmx.gob.mx/",
+      "description": "Documento técnico que establece las acciones de prevención, auxilio y recuperación ante emergencias en el establecimiento. Debe elaborarlo un Tercero Acreditado registrado.",
+      "why": "Es uno de los trámites que más clausuras genera por su ausencia. Obligatorio para establecimientos con afluencia de público, y crítico si vendes alcohol o usas gas.",
+      "steps": [
+        {"title": "Contrata un Tercero Acreditado", "detail": "Solo un tercero acreditado y registrado ante la SGIRPC puede elaborar y firmar el PIPC (ver Marketplace)."},
+        {"title": "Diagnóstico de riesgos", "detail": "El tercero realiza el análisis de riesgos internos y externos del inmueble."},
+        {"title": "Elaboración del programa", "detail": "Incluye planes de emergencia, señalización, extintores, brigadas y simulacros."},
+        {"title": "Registro ante la SGIRPC", "detail": "Se ingresa el programa para su registro; debe revalidarse anualmente."}
+      ]
+    },
+    {
+      "code": "VBSO",
+      "name": "Visto Bueno de Seguridad y Operación (VBSO)",
+      "authority": "Alcaldía correspondiente / SGIRPC",
+      "category": "proteccion_civil",
+      "criticality": "alta",
+      "vigencia_meses": 36,
+      "estimated_cost": "$3,000 - $10,000 MXN",
+      "estimated_time": "2 a 4 semanas",
+      "official_url": "https://www.cdmx.gob.mx/",
+      "description": "Constancia que acredita que las instalaciones y equipos del establecimiento cumplen las condiciones de seguridad y operación exigidas por el Reglamento de Construcciones.",
+      "why": "Requerido para establecimientos de mediana y alta afluencia (aforo o superficie relevantes). Verifica instalaciones eléctricas, de gas, hidráulicas y de seguridad.",
+      "steps": [
+        {"title": "Contrata un DRO o Corresponsable", "detail": "Un Director Responsable de Obra evalúa que el inmueble cumpla el Reglamento de Construcciones (ver Marketplace)."},
+        {"title": "Revisión de instalaciones", "detail": "Verificación de instalaciones eléctricas, hidráulicas, sanitarias y de gas."},
+        {"title": "Integración del expediente", "detail": "Planos, memorias de cálculo y responsiva del DRO."},
+        {"title": "Ingreso ante la Alcaldía", "detail": "Presenta el expediente; el VBSO debe renovarse periódicamente (usualmente cada 3 años)."}
+      ]
+    },
+    {
+      "code": "PERMISO_ALCOHOL",
+      "name": "Autorización para Venta de Bebidas Alcohólicas (Impacto Vecinal)",
+      "authority": "SEDECO CDMX / Alcaldía",
+      "category": "operacion",
+      "criticality": "alta",
+      "vigencia_meses": 12,
+      "estimated_cost": "Derechos según giro; puede superar $10,000 MXN",
+      "estimated_time": "10 a 20 días hábiles",
+      "official_url": "https://siapem.cdmx.gob.mx/",
+      "description": "Permiso para operar como establecimiento de impacto vecinal con venta de bebidas alcohólicas al copeo o en botella cerrada. Reclasifica al negocio como de impacto vecinal.",
+      "why": "Vender alcohol sin la autorización correspondiente es una de las infracciones más sancionadas por el INVEA, con multas altas y clausura.",
+      "steps": [
+        {"title": "Confirma la viabilidad", "detail": "El uso de suelo debe permitir venta de alcohol; hay restricciones por cercanía a escuelas."},
+        {"title": "Presenta el Permiso de operación", "detail": "En el SIAPEM selecciona el permiso de impacto vecinal con venta de alcohol."},
+        {"title": "Cumple horarios y condiciones", "detail": "Respeta los horarios autorizados y la exhibición del permiso."},
+        {"title": "Revalida anualmente", "detail": "El permiso requiere revalidación y pago de derechos cada año."}
+      ]
+    },
+    {
+      "code": "DICTAMEN_GAS",
+      "name": "Dictamen de Instalación de Gas L.P.",
+      "authority": "Unidad de Inspección / Unidad de Verificación acreditada (ante la Secretaría de Energía)",
+      "category": "seguridad",
+      "criticality": "alta",
+      "vigencia_meses": 12,
+      "estimated_cost": "$2,500 - $8,000 MXN",
+      "estimated_time": "1 a 3 semanas",
+      "official_url": "https://www.gob.mx/sener",
+      "description": "Dictamen que certifica que la instalación de gas L.P. cumple la NOM-004-SEDG-2004 y demás normas aplicables, emitido por una unidad de verificación acreditada.",
+      "why": "Las instalaciones de gas son causa frecuente de siniestros. El dictamen es exigido en verificaciones y por aseguradoras; su ausencia es riesgo grave.",
+      "steps": [
+        {"title": "Contrata una Unidad de Verificación", "detail": "Debe estar acreditada ante la EMA / Secretaría de Energía (ver Marketplace)."},
+        {"title": "Inspección física", "detail": "Se revisan tanques, tuberías, reguladores, ventilación y detectores."},
+        {"title": "Corrección de hallazgos", "detail": "Si hay observaciones, corrige antes de la emisión del dictamen."},
+        {"title": "Obtén el dictamen", "detail": "Recibe el dictamen aprobatorio; renuévalo conforme a su vigencia."}
+      ]
+    },
+    {
+      "code": "AUTORIZACION_ENSERES",
+      "name": "Autorización de Enseres e Instalaciones en Vía Pública (Terraza)",
+      "authority": "Alcaldía correspondiente",
+      "category": "operacion",
+      "criticality": "media",
+      "vigencia_meses": 12,
+      "estimated_cost": "Derechos por m² ocupado (variable por alcaldía)",
+      "estimated_time": "10 a 15 días hábiles",
+      "official_url": "https://www.cdmx.gob.mx/",
+      "description": "Permiso para colocar mesas, sillas, sombrillas y enseres en la vía pública frente al establecimiento (terrazas y áreas al aire libre).",
+      "why": "Colocar enseres sin autorización genera retiro, multas y conflictos con la vía pública. Se renueva cada año.",
+      "steps": [
+        {"title": "Croquis de ocupación", "detail": "Elabora un croquis del área a ocupar con medidas y mobiliario."},
+        {"title": "Solicita en tu Alcaldía", "detail": "Presenta la solicitud en la ventanilla de la alcaldía correspondiente."},
+        {"title": "Paga los derechos", "detail": "El costo depende de los metros cuadrados ocupados."},
+        {"title": "Renueva anualmente", "detail": "La autorización de enseres se revalida cada año."}
+      ]
+    },
+    {
+      "code": "LICENCIA_ANUNCIOS",
+      "name": "Licencia / Permiso de Anuncios",
+      "authority": "SEDUVI CDMX / Alcaldía",
+      "category": "inmueble",
+      "criticality": "media",
+      "vigencia_meses": 12,
+      "estimated_cost": "Variable según tipo y dimensiones del anuncio",
+      "estimated_time": "10 a 20 días hábiles",
+      "official_url": "https://www.seduvi.cdmx.gob.mx/",
+      "description": "Autorización para la instalación de anuncios (adosados, autosoportados, luminosos) en la fachada o inmueble del establecimiento.",
+      "why": "Los anuncios sin licencia son sancionados por SEDUVI y las alcaldías. La Ley de Publicidad Exterior regula dimensiones y tipos permitidos.",
+      "steps": [
+        {"title": "Define el tipo de anuncio", "detail": "Adosado, autosoportado, de nicho, etc. Cada tipo tiene requisitos distintos."},
+        {"title": "Verifica restricciones", "detail": "Revisa dimensiones máximas y zonas restringidas según la Ley de Publicidad Exterior."},
+        {"title": "Presenta la solicitud", "detail": "Ante SEDUVI o la alcaldía, con planos y fotografías del anuncio."},
+        {"title": "Obtén la licencia", "detail": "Recibe el permiso y respeta su vigencia anual."}
+      ]
+    },
+    {
+      "code": "PLAN_MANEJO_RESIDUOS",
+      "name": "Plan de Manejo de Residuos Sólidos",
+      "authority": "SEDEMA CDMX",
+      "category": "ambiental",
+      "criticality": "media",
+      "vigencia_meses": 24,
+      "estimated_cost": "$3,000 - $9,000 MXN",
+      "estimated_time": "2 a 4 semanas",
+      "official_url": "https://www.sedema.cdmx.gob.mx/",
+      "description": "Registro del plan de manejo de residuos sólidos (orgánicos, inorgánicos y de manejo especial como aceites y grasas) que genera el establecimiento.",
+      "why": "Los restaurantes generan residuos de manejo especial (aceites, grasas). Su manejo inadecuado genera sanciones ambientales y problemas de drenaje.",
+      "steps": [
+        {"title": "Caracteriza tus residuos", "detail": "Identifica los tipos y volúmenes de residuos que genera tu operación."},
+        {"title": "Contrata gestores autorizados", "detail": "Para aceites y grasas, usa empresas registradas de recolección."},
+        {"title": "Elabora y registra el plan", "detail": "Presenta el plan de manejo ante SEDEMA."},
+        {"title": "Lleva bitácoras", "detail": "Documenta la disposición de residuos; se revisa en verificaciones."}
+      ]
+    },
+    {
+      "code": "SACMEX_DESCARGAS",
+      "name": "Registro de Descargas de Aguas Residuales (SACMEX)",
+      "authority": "Sistema de Aguas de la Ciudad de México (SACMEX)",
+      "category": "ambiental",
+      "criticality": "media",
+      "vigencia_meses": null,
+      "estimated_cost": "Gratuito (registro); derechos de agua según consumo",
+      "estimated_time": "5 a 10 días hábiles",
+      "official_url": "https://www.sacmex.cdmx.gob.mx/",
+      "description": "Registro ante SACMEX de las descargas de aguas residuales y constancia de no adeudo de derechos por suministro de agua.",
+      "why": "Los establecimientos de A&B descargan grasas y aguas residuales. El registro y la trampa de grasas evitan sanciones y bloqueos de drenaje.",
+      "steps": [
+        {"title": "Verifica tu toma de agua", "detail": "Confirma que la cuenta de agua esté a nombre correcto y sin adeudos."},
+        {"title": "Instala trampa de grasas", "detail": "Obligatoria para cocinas; evita descargas que dañan el drenaje."},
+        {"title": "Registra la descarga", "detail": "Presenta el registro de descarga de aguas residuales ante SACMEX."},
+        {"title": "Mantén el no adeudo", "detail": "Paga los derechos de agua a tiempo para conservar la constancia de no adeudo."}
+      ]
+    },
+    {
+      "code": "ESTUDIO_RUIDO",
+      "name": "Constancia de Cumplimiento de Ruido (NADF-005)",
+      "authority": "SEDEMA CDMX / PAOT",
+      "category": "ambiental",
+      "criticality": "media",
+      "vigencia_meses": 12,
+      "estimated_cost": "$4,000 - $12,000 MXN (estudio acústico)",
+      "estimated_time": "2 a 4 semanas",
+      "official_url": "https://www.sedema.cdmx.gob.mx/",
+      "description": "Estudio y constancia que acredita que los niveles de ruido emitidos (música en vivo, sonido, equipos) cumplen la Norma Ambiental NADF-005-AMBT-2013.",
+      "why": "Los establecimientos con música o alta afluencia reciben quejas ciudadanas por ruido, una de las causas principales de reportes ante el INVEA y la PAOT.",
+      "steps": [
+        {"title": "Realiza un estudio acústico", "detail": "Un laboratorio acreditado mide los niveles de ruido en horarios de operación."},
+        {"title": "Ajusta si es necesario", "detail": "Instala aislamiento acústico si superas los límites permitidos."},
+        {"title": "Obtén la constancia", "detail": "Con las mediciones dentro de norma, tramita la constancia de cumplimiento."},
+        {"title": "Renueva periódicamente", "detail": "Revalida el estudio y atiende quejas vecinales de forma preventiva."}
+      ]
+    },
+    {
+      "code": "IMSS_PATRONAL",
+      "name": "Registro Patronal e Inscripción de Trabajadores (IMSS)",
+      "authority": "Instituto Mexicano del Seguro Social (IMSS)",
+      "category": "laboral",
+      "criticality": "alta",
+      "vigencia_meses": null,
+      "estimated_cost": "Gratuito (registro); cuotas obrero-patronales mensuales",
+      "estimated_time": "1 a 5 días hábiles",
+      "official_url": "https://www.imss.gob.mx/patrones",
+      "description": "Alta como patrón ante el IMSS e inscripción de los trabajadores al seguro social. Obligatorio desde el primer empleado.",
+      "why": "No asegurar a los trabajadores genera multas del IMSS, responsabilidad por riesgos de trabajo y demandas laborales.",
+      "steps": [
+        {"title": "Obtén tu registro patronal", "detail": "Con e.firma, tramita el alta patronal en el portal del IMSS (IDSE)."},
+        {"title": "Determina tu prima de riesgo", "detail": "El giro de A&B tiene una clase de riesgo específica que define tus cuotas."},
+        {"title": "Da de alta a tus trabajadores", "detail": "Inscribe a cada empleado con su NSS dentro de los plazos legales."},
+        {"title": "Paga cuotas mensuales", "detail": "Cubre las cuotas obrero-patronales cada mes mediante el SUA."}
+      ]
+    }
+  ]
+}
