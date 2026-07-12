@@ -45,8 +45,8 @@ class Settings(BaseSettings):
 
     # --- IA (Asesor CumplIA, Anthropic) ---
     anthropic_api_key: str = Field(default="", validation_alias="ANTHROPIC_API_KEY")
-    # Modelo por defecto: Claude Opus 4.8. Cambia a claude-haiku-4-5 para abaratar la demo.
-    assistant_model: str = Field(default="claude-opus-4-8", validation_alias="ASSISTANT_MODEL")
+    # Modelo por defecto: Claude Haiku 4.5 (rápido y económico para el chat).
+    assistant_model: str = Field(default="claude-haiku-4-5", validation_alias="ASSISTANT_MODEL")
 
     # --- Flags ---
     # Mapea la variable de entorno USE_MOCK -> este campo.
