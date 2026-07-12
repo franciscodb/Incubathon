@@ -397,3 +397,27 @@ export async function getSubscription(): Promise<Subscription> {
 export async function createCheckout(input: CheckoutInput): Promise<CheckoutResponse> {
   return apiFetch<CheckoutResponse>('/billing/checkout', { method: 'POST', body: input })
 }
+
+// =====================================================================
+// ASESOR IA (Asistente de cumplimiento)
+// =====================================================================
+export interface AssistantChatMessage {
+  role: 'user' | 'assistant'
+  content: string
+}
+
+export interface AssistantChatResult {
+  reply: string
+  available: boolean
+}
+
+/** Envía la conversación al Asesor CumplIA, aterrizada opcionalmente en un negocio. */
+export async function sendAssistantMessage(input: {
+  businessId?: string | null
+  messages: AssistantChatMessage[]
+}): Promise<AssistantChatResult> {
+  return apiFetch<AssistantChatResult>('/assistant/chat', {
+    method: 'POST',
+    body: { business_id: input.businessId ?? null, messages: input.messages },
+  })
+}
