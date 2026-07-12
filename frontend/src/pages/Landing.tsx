@@ -111,7 +111,7 @@ export default function Landing() {
             <h1 className="mt-6 font-display text-4xl font-extrabold leading-[1.08] text-white sm:text-5xl lg:text-6xl">
               El <span className="text-white">Buró de Cumplimiento</span>
               <br />
-              del cumplimiento de tu negocio.
+              de tu negocio.
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/80">
               Descubre en minutos qué permisos necesita tu restaurante, bar o café en la Ciudad de
