@@ -109,7 +109,7 @@ export default function Landing() {
               RegTech para Alimentos y Bebidas · CDMX
             </span>
             <h1 className="mt-6 font-display text-4xl font-extrabold leading-[1.08] text-white sm:text-5xl lg:text-6xl">
-              El <span className="text-white">Buró de Crédito</span>
+              El <span className="text-white">Buró de Cumplimiento</span>
               <br />
               del cumplimiento de tu negocio.
             </h1>
