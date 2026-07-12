@@ -9,6 +9,7 @@ import { ComplianceGauge, SemaphoreDot } from '../components/Semaphore'
 import { GradeBadge, GradeSeal } from '../components/Grade'
 import { ProcedureCard, ProcedureListItem } from '../components/ProcedureViews'
 import { EmptyState, SectionTitle, Spinner } from '../components/common'
+import AssistantChat from '../components/AssistantChat'
 import {
   IconAlert,
   IconGrid,
@@ -122,6 +123,7 @@ export default function Dashboard() {
             }
           />
         </div>
+        <AssistantChat />
       </div>
     )
   }
@@ -347,6 +349,8 @@ export default function Dashboard() {
           )}
         </>
       )}
+
+      <AssistantChat businessId={business?.id} businessName={business?.nombre} />
     </div>
   )
 }

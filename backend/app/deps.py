@@ -1,8 +1,10 @@
 """Dependencias compartidas de FastAPI.
 
-- ``get_current_user``: resuelve el usuario autenticado a partir del header
-  ``Authorization: Bearer <jwt>``. En modo *live* verifica el token contra
-  Supabase Auth; en modo *mock* devuelve un usuario demo fijo.
+- ``get_current_user``: resuelve el usuario autenticado a partir de la cookie
+  httpOnly ``ACCESS_TOKEN_COOKIE`` (o, como fallback, el header
+  ``Authorization: Bearer <jwt>`` para clientes no-browser como /docs).
+  En modo *live* verifica el token contra Supabase Auth; en modo *mock*
+  devuelve un usuario demo fijo.
 - ``get_mock_store``: acceso al singleton del almacén en memoria.
 """
 
@@ -10,12 +12,15 @@ from __future__ import annotations
 
 from typing import Optional
 
-from fastapi import Depends, Header, HTTPException, status
+from fastapi import Cookie, Depends, Header, HTTPException, status
 
 from .config import settings
 from .mock_store import DEMO_OWNER_EMAIL, DEMO_OWNER_ID, MockStore, get_store
 from .schemas import User, UserRole
 from .supabase_client import get_supabase
+
+# Nombre de la cookie httpOnly donde vive el JWT de sesión.
+ACCESS_TOKEN_COOKIE = "access_token"
 
 
 def get_mock_store() -> MockStore:
@@ -36,11 +41,14 @@ def _extract_bearer(authorization: Optional[str]) -> Optional[str]:
 
 async def get_current_user(
     authorization: Optional[str] = Header(default=None),
+    access_token_cookie: Optional[str] = Cookie(default=None, alias=ACCESS_TOKEN_COOKIE),
 ) -> User:
     """Devuelve el usuario autenticado.
 
     Modo mock: usuario demo fijo (business_owner). Modo live: verifica el JWT
-    con ``supabase.auth.get_user`` y arma el perfil.
+    con ``supabase.auth.get_user`` y arma el perfil. Prioriza la cookie
+    httpOnly (uso normal del frontend); el header Bearer queda como fallback
+    para /docs y clientes que no son navegador.
     """
     # --- Modo mock: usuario demo fijo ---
     if settings.use_mock:
@@ -58,7 +66,7 @@ async def get_current_user(
         )
 
     # --- Modo live: verificar contra Supabase ---
-    token = _extract_bearer(authorization)
+    token = access_token_cookie or _extract_bearer(authorization)
     if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

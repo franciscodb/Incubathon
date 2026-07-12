@@ -6,10 +6,10 @@ y usuario demo para poder navegar toda la app sin base de datos.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 
 from ..config import settings
-from ..deps import get_current_user
+from ..deps import ACCESS_TOKEN_COOKIE, get_current_user
 from ..mock_store import MOCK_TOKEN, MockStore, get_store
 from ..schemas import (
     AuthResponse,
@@ -23,8 +23,20 @@ from ..supabase_client import get_supabase
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
+def _set_session_cookie(response: Response, token: str) -> None:
+    """Guarda el JWT en una cookie httpOnly (no accesible desde JS)."""
+    response.set_cookie(
+        key=ACCESS_TOKEN_COOKIE,
+        value=token,
+        httponly=True,
+        secure=settings.cookie_secure,
+        samesite=settings.cookie_samesite,
+        path="/",
+    )
+
+
 @router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
-def register(payload: RegisterRequest) -> AuthResponse:
+def register(payload: RegisterRequest, response: Response) -> AuthResponse:
     """Registra un usuario (dueño de negocio o profesional)."""
     role_value = payload.role.value if isinstance(payload.role, UserRole) else str(payload.role)
 
@@ -39,6 +51,7 @@ def register(payload: RegisterRequest) -> AuthResponse:
         user = store.create_user(
             payload.email, payload.password, role_value, full_name=payload.full_name
         )
+        _set_session_cookie(response, MOCK_TOKEN)
         return AuthResponse(
             access_token=MOCK_TOKEN,
             user=User(
@@ -98,6 +111,9 @@ def register(payload: RegisterRequest) -> AuthResponse:
     except Exception:
         access_token = ""
 
+    if access_token:
+        _set_session_cookie(response, access_token)
+
     return AuthResponse(
         access_token=access_token or "",
         user=User(
@@ -110,7 +126,7 @@ def register(payload: RegisterRequest) -> AuthResponse:
 
 
 @router.post("/login", response_model=AuthResponse)
-def login(payload: LoginRequest) -> AuthResponse:
+def login(payload: LoginRequest, response: Response) -> AuthResponse:
     """Inicia sesión y devuelve un token de acceso."""
     # --- Modo mock ---
     if settings.use_mock:
@@ -127,6 +143,7 @@ def login(payload: LoginRequest) -> AuthResponse:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Credenciales inválidas (mock).",
             )
+        _set_session_cookie(response, MOCK_TOKEN)
         return AuthResponse(
             access_token=MOCK_TOKEN,
             user=User(
@@ -161,6 +178,8 @@ def login(payload: LoginRequest) -> AuthResponse:
     except ValueError:
         role_enum = UserRole.business_owner
 
+    _set_session_cookie(response, session.access_token)
+
     return AuthResponse(
         access_token=session.access_token,
         user=User(
@@ -176,3 +195,9 @@ def login(payload: LoginRequest) -> AuthResponse:
 def me(current_user: User = Depends(get_current_user)) -> User:
     """Devuelve el usuario autenticado actual."""
     return current_user
+
+
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
+def logout(response: Response) -> None:
+    """Borra la cookie de sesión."""
+    response.delete_cookie(key=ACCESS_TOKEN_COOKIE, path="/")

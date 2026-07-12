@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
-import { getToken } from '../lib/api'
+import { hasActiveSession } from '../lib/db'
 import { Logo } from '../components/common'
 import { IconArrowRight, IconBadgeCheck, IconStore, IconUsers } from '../components/icons'
 import authImg from '../assets/generated/cafe.jpg'
@@ -30,7 +30,7 @@ export default function Register() {
       await register({ email, password, full_name: fullName, role })
       notify('Cuenta creada 🎉')
       // Si el proyecto exige confirmar correo, no hay sesión todavía.
-      if (!getToken()) {
+      if (!(await hasActiveSession())) {
         notify('Revisa tu correo para confirmar la cuenta e inicia sesión.', 'info')
         navigate('/login')
         return

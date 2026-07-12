@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 from .schemas import HealthResponse
 from .routers import (
+    assistant,
     auth,
     billing,
     businesses,
@@ -32,8 +33,10 @@ app = FastAPI(
 )
 
 # --- CORS ---
-# Permite el origen del frontend (o '*' en demo). Con credenciales, métodos y
-# headers abiertos para facilitar la integración durante el hackathon.
+# La sesión viaja en una cookie httpOnly (ver deps.ACCESS_TOKEN_COOKIE), así
+# que allow_credentials=True es obligatorio y FRONTEND_ORIGIN NO puede quedar
+# en '*' (los navegadores rechazan credentials + wildcard): hay que listar
+# el/los orígenes reales del frontend.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
@@ -50,6 +53,7 @@ app.include_router(professionals.router)
 app.include_router(documents.router)
 app.include_router(contact.router)
 app.include_router(billing.router)
+app.include_router(assistant.router)
 
 
 # --- Endpoints raíz ---
