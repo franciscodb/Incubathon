@@ -10,8 +10,14 @@
 // - `apiFetch` para JSON; `apiUpload` para multipart (subida de archivos).
 // =====================================================================
 
+// Prod: por defecto usamos '/api' (mismo origen) — Vercel lo reescribe al
+// backend de Railway (ver vercel.json). Así la cookie de sesión es de PRIMERA
+// parte (no de terceros) y no hay CORS. Dev: apunta al backend local.
+// Un VITE_API_URL explícito (URL absoluta) tiene prioridad, pero rompe el
+// esquema de mismo origen — úsalo solo si sabes lo que haces.
 export const API_URL: string =
-  import.meta.env.VITE_API_URL?.trim() || 'http://localhost:8000'
+  import.meta.env.VITE_API_URL?.trim() ||
+  (import.meta.env.PROD ? '/api' : 'http://localhost:8000')
 
 /** Error HTTP con el status y el detalle que devolvió el backend. */
 export class ApiError extends Error {

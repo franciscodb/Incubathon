@@ -6,7 +6,7 @@ y usuario demo para poder navegar toda la app sin base de datos.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 
 from ..config import settings
 from ..deps import ACCESS_TOKEN_COOKIE, get_current_user
@@ -23,20 +23,41 @@ from ..supabase_client import get_supabase
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-def _set_session_cookie(response: Response, token: str) -> None:
-    """Guarda el JWT en una cookie httpOnly (no accesible desde JS)."""
+def _is_https_request(request: Request) -> bool:
+    """Detecta HTTPS de forma robusta detrás de un proxy (Railway, Vercel, etc.).
+
+    Railway termina el TLS y reenvía con ``X-Forwarded-Proto: https``. Nos
+    basamos en esa cabecera (y en el esquema real) en vez de en una variable de
+    entorno, para que la cookie salga Secure/SameSite=None sin depender de que
+    FRONTEND_URL esté bien configurado.
+    """
+    proto = (request.headers.get("x-forwarded-proto") or request.url.scheme or "").strip()
+    proto = proto.split(",")[0].strip().lower()  # puede venir "https,http"
+    if proto:
+        return proto == "https"
+    return settings.cookie_secure  # sin señal: usa el default de config
+
+
+def _set_session_cookie(request: Request, response: Response, token: str) -> None:
+    """Guarda el JWT en una cookie httpOnly (no accesible desde JS).
+
+    Cross-site (frontend y backend en dominios distintos) requiere
+    ``SameSite=None; Secure`` — que solo es válido sobre HTTPS. El esquema se
+    detecta por request para que funcione en prod sin configuración extra.
+    """
+    secure = _is_https_request(request)
     response.set_cookie(
         key=ACCESS_TOKEN_COOKIE,
         value=token,
         httponly=True,
-        secure=settings.cookie_secure,
-        samesite=settings.cookie_samesite,
+        secure=secure,
+        samesite="none" if secure else "lax",
         path="/",
     )
 
 
 @router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
-def register(payload: RegisterRequest, response: Response) -> AuthResponse:
+def register(payload: RegisterRequest, request: Request, response: Response) -> AuthResponse:
     """Registra un usuario (dueño de negocio o profesional)."""
     role_value = payload.role.value if isinstance(payload.role, UserRole) else str(payload.role)
 
@@ -51,7 +72,7 @@ def register(payload: RegisterRequest, response: Response) -> AuthResponse:
         user = store.create_user(
             payload.email, payload.password, role_value, full_name=payload.full_name
         )
-        _set_session_cookie(response, MOCK_TOKEN)
+        _set_session_cookie(request, response, MOCK_TOKEN)
         return AuthResponse(
             access_token=MOCK_TOKEN,
             user=User(
@@ -112,7 +133,7 @@ def register(payload: RegisterRequest, response: Response) -> AuthResponse:
         access_token = ""
 
     if access_token:
-        _set_session_cookie(response, access_token)
+        _set_session_cookie(request, response, access_token)
 
     return AuthResponse(
         access_token=access_token or "",
@@ -126,7 +147,7 @@ def register(payload: RegisterRequest, response: Response) -> AuthResponse:
 
 
 @router.post("/login", response_model=AuthResponse)
-def login(payload: LoginRequest, response: Response) -> AuthResponse:
+def login(payload: LoginRequest, request: Request, response: Response) -> AuthResponse:
     """Inicia sesión y devuelve un token de acceso."""
     # --- Modo mock ---
     if settings.use_mock:
@@ -143,7 +164,7 @@ def login(payload: LoginRequest, response: Response) -> AuthResponse:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Credenciales inválidas (mock).",
             )
-        _set_session_cookie(response, MOCK_TOKEN)
+        _set_session_cookie(request, response, MOCK_TOKEN)
         return AuthResponse(
             access_token=MOCK_TOKEN,
             user=User(
@@ -178,7 +199,7 @@ def login(payload: LoginRequest, response: Response) -> AuthResponse:
     except ValueError:
         role_enum = UserRole.business_owner
 
-    _set_session_cookie(response, session.access_token)
+    _set_session_cookie(request, response, session.access_token)
 
     return AuthResponse(
         access_token=session.access_token,
@@ -198,6 +219,12 @@ def me(current_user: User = Depends(get_current_user)) -> User:
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
-def logout(response: Response) -> None:
-    """Borra la cookie de sesión."""
-    response.delete_cookie(key=ACCESS_TOKEN_COOKIE, path="/")
+def logout(request: Request, response: Response) -> None:
+    """Borra la cookie de sesión (mismos atributos con que se creó)."""
+    secure = _is_https_request(request)
+    response.delete_cookie(
+        key=ACCESS_TOKEN_COOKIE,
+        path="/",
+        secure=secure,
+        samesite="none" if secure else "lax",
+    )

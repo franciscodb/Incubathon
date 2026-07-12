@@ -12,6 +12,17 @@ from functools import lru_cache
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# Orígenes de dev y de producción conocidos. NUNCA usamos '*' porque la sesión
+# viaja en cookie y CORS con credenciales (allow_credentials=True) prohíbe el
+# comodín en los navegadores.
+_DEV_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"]
+_DEFAULT_PROD_ORIGINS = [
+    "https://cumplia-mx.vercel.app",
+    "https://buro-cumplimiento-frontend.vercel.app",
+]
+# Cualquier subdominio de vercel.app (cubre los preview deploys) con credenciales.
+FRONTEND_ORIGIN_REGEX = r"https://[a-z0-9-]+\.vercel\.app"
+
 
 class Settings(BaseSettings):
     """Variables de entorno de la aplicación.
@@ -35,7 +46,8 @@ class Settings(BaseSettings):
     supabase_bucket: str = Field(default="documents", validation_alias="SUPABASE_BUCKET")
 
     # --- CORS / Frontend ---
-    frontend_origin: str = Field(default="*", validation_alias="FRONTEND_ORIGIN")
+    # Vacío = usar dev + prod conocidos (nunca '*', ver cors_origins).
+    frontend_origin: str = Field(default="", validation_alias="FRONTEND_ORIGIN")
     # URL pública del frontend, usada para las redirecciones de Stripe Checkout.
     frontend_url: str = Field(default="http://localhost:5173", validation_alias="FRONTEND_URL")
 
@@ -82,19 +94,49 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins(self) -> list[str]:
-        """Lista de orígenes permitidos por CORS.
+        """Lista explícita de orígenes permitidos por CORS.
 
-        Acepta múltiples orígenes separados por coma en FRONTEND_ORIGIN.
+        Con cookies de sesión (allow_credentials=True) los navegadores prohíben
+        '*'. Por eso NUNCA devolvemos comodín: si no hay FRONTEND_ORIGIN caemos
+        a dev + prod conocidos. Los preview de Vercel los cubre
+        ``cors_origin_regex`` en el middleware. Acepta múltiples orígenes
+        separados por coma.
         """
         raw = self.frontend_origin.strip()
-        if not raw or raw == "*":
-            return ["*"]
-        return [o.strip() for o in raw.split(",") if o.strip()]
+        if raw and raw != "*":
+            origins = [o.strip() for o in raw.split(",") if o.strip()]
+        else:
+            origins = [*_DEV_ORIGINS, *_DEFAULT_PROD_ORIGINS]
+
+        # Asegura que el frontend_url (si es real) esté permitido.
+        fu = self.frontend_url.strip().rstrip("/")
+        if fu and fu not in origins:
+            origins.append(fu)
+
+        # Elimina duplicados preservando el orden.
+        seen: set[str] = set()
+        ordered: list[str] = []
+        for o in origins:
+            if o not in seen:
+                seen.add(o)
+                ordered.append(o)
+        return ordered
+
+    @property
+    def cors_origin_regex(self) -> str:
+        """Regex de orígenes permitidos (cualquier deploy de Vercel)."""
+        return FRONTEND_ORIGIN_REGEX
 
     @property
     def cookie_secure(self) -> bool:
-        """True si el frontend sirve por HTTPS (requerido para SameSite=None)."""
-        return self.frontend_url.strip().lower().startswith("https://")
+        """Fallback: True si el frontend se sirve por HTTPS (cross-site prod).
+
+        La decisión real se toma por request en ``auth.py`` (X-Forwarded-Proto),
+        robusta detrás del proxy de Railway. Esto es solo el valor por defecto.
+        """
+        if self.frontend_url.strip().lower().startswith("https://"):
+            return True
+        return "https://" in self.frontend_origin.strip().lower()
 
     @property
     def cookie_samesite(self) -> str:

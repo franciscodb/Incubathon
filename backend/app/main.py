@@ -40,6 +40,9 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
+    # Además de la lista explícita, permite cualquier deploy de Vercel (incluye
+    # los preview URLs) para que un FRONTEND_ORIGIN mal puesto no tumbe el login.
+    allow_origin_regex=settings.cors_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

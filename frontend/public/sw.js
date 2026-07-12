@@ -2,8 +2,8 @@
 // Estrategia:
 //  - Navegaciones (SPA): network-first con fallback a la app shell cacheada.
 //  - Estáticos same-origin: cache-first con relleno en segundo plano.
-//  - API/backend y orígenes externos (fuentes): siempre red (no se cachean).
-const CACHE = 'cumplia-cache-v1'
+//  - API/backend (/api/*, proxy a Railway) y orígenes externos: siempre red.
+const CACHE = 'cumplia-cache-v2'
 const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/favicon.svg', '/icon.svg']
 
 self.addEventListener('install', (event) => {
@@ -29,8 +29,11 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return
 
   const url = new URL(request.url)
-  // Sólo manejamos el mismo origen; API y fuentes van directo a la red.
+  // Sólo manejamos el mismo origen; orígenes externos van directo a la red.
   if (url.origin !== self.location.origin) return
+  // La API pasa por el proxy same-origin /api -> backend. NUNCA la cacheamos
+  // (datos frescos: /health, negocios, trámites, etc.); va directo a la red.
+  if (url.pathname.startsWith('/api/')) return
 
   // Navegaciones: intenta red, cae a la app shell si no hay conexión.
   if (request.mode === 'navigate') {
