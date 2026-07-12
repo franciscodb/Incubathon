@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 from .schemas import HealthResponse
 from .routers import (
+    assistant,
     auth,
     billing,
     businesses,
@@ -52,6 +53,7 @@ app.include_router(professionals.router)
 app.include_router(documents.router)
 app.include_router(contact.router)
 app.include_router(billing.router)
+app.include_router(assistant.router)
 
 
 # --- Endpoints raíz ---

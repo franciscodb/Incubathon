@@ -43,6 +43,11 @@ class Settings(BaseSettings):
     stripe_secret_key: str = Field(default="", validation_alias="STRIPE_SECRET_KEY")
     stripe_webhook_secret: str = Field(default="", validation_alias="STRIPE_WEBHOOK_SECRET")
 
+    # --- IA (Asesor CumplIA, Anthropic) ---
+    anthropic_api_key: str = Field(default="", validation_alias="ANTHROPIC_API_KEY")
+    # Modelo por defecto: Claude Opus 4.8. Cambia a claude-haiku-4-5 para abaratar la demo.
+    assistant_model: str = Field(default="claude-opus-4-8", validation_alias="ASSISTANT_MODEL")
+
     # --- Flags ---
     # Mapea la variable de entorno USE_MOCK -> este campo.
     use_mock_flag: bool = Field(default=True, validation_alias="USE_MOCK")
@@ -51,6 +56,11 @@ class Settings(BaseSettings):
     def has_stripe(self) -> bool:
         """True si hay credenciales de Stripe (cobro real habilitado)."""
         return bool(self.stripe_secret_key.strip())
+
+    @property
+    def has_anthropic(self) -> bool:
+        """True si hay llave de Anthropic (Asesor IA habilitado)."""
+        return bool(self.anthropic_api_key.strip())
 
     @property
     def checkout_base(self) -> str:

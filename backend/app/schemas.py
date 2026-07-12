@@ -536,6 +536,41 @@ class CheckoutResponse(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# Asesor IA (Asistente de cumplimiento)
+# ---------------------------------------------------------------------------
+class AssistantRole(str, Enum):
+    user = "user"
+    assistant = "assistant"
+
+
+class AssistantMessage(BaseModel):
+    """Un turno de la conversación con el Asesor CumplIA."""
+
+    role: AssistantRole
+    content: str = Field(min_length=1, max_length=4000)
+
+    model_config = ConfigDict(use_enum_values=True)
+
+
+class AssistantChatRequest(BaseModel):
+    """Petición de chat al asesor. `business_id` aterriza la respuesta en un negocio."""
+
+    messages: list[AssistantMessage] = Field(min_length=1)
+    business_id: Optional[str] = Field(
+        default=None, description="Negocio sobre el que se contextualiza la respuesta."
+    )
+
+
+class AssistantChatResponse(BaseModel):
+    """Respuesta del asesor."""
+
+    reply: str
+    available: bool = Field(
+        default=True, description="False si la IA no está configurada (sin ANTHROPIC_API_KEY)."
+    )
+
+
+# ---------------------------------------------------------------------------
 # Respuestas utilitarias
 # ---------------------------------------------------------------------------
 class HealthResponse(BaseModel):
