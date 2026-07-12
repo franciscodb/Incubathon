@@ -81,6 +81,16 @@ class Settings(BaseSettings):
             return ["*"]
         return [o.strip() for o in raw.split(",") if o.strip()]
 
+    @property
+    def cookie_secure(self) -> bool:
+        """True si el frontend sirve por HTTPS (requerido para SameSite=None)."""
+        return self.frontend_url.strip().lower().startswith("https://")
+
+    @property
+    def cookie_samesite(self) -> str:
+        """'none' en producción (dominios distintos), 'lax' en local (mismo site)."""
+        return "none" if self.cookie_secure else "lax"
+
 
 @lru_cache
 def get_settings() -> Settings:

@@ -3,28 +3,15 @@
 // El frontend YA NO habla con Supabase directo: todo pasa por el backend,
 // que a su vez usa Supabase (Auth + Postgres + Storage).
 //
-// - Guarda el access_token (JWT de Supabase, devuelto por /auth/login) en
-//   localStorage y lo manda como `Authorization: Bearer` en cada petición.
+// - La sesión vive en una cookie httpOnly que pone el backend en
+//   /auth/login y /auth/register (ver deps.ACCESS_TOKEN_COOKIE). El
+//   frontend NUNCA la lee ni la guarda: solo manda `credentials: 'include'`
+//   para que el navegador la adjunte sola en cada petición.
 // - `apiFetch` para JSON; `apiUpload` para multipart (subida de archivos).
 // =====================================================================
 
 export const API_URL: string =
   import.meta.env.VITE_API_URL?.trim() || 'http://localhost:8000'
-
-const TOKEN_KEY = 'buro_token'
-
-export function getToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY)
-}
-
-export function setToken(token: string | null): void {
-  if (token) localStorage.setItem(TOKEN_KEY, token)
-  else localStorage.removeItem(TOKEN_KEY)
-}
-
-export function clearToken(): void {
-  localStorage.removeItem(TOKEN_KEY)
-}
 
 /** Error HTTP con el status y el detalle que devolvió el backend. */
 export class ApiError extends Error {
@@ -54,7 +41,6 @@ async function parseError(res: Response): Promise<never> {
 interface FetchOptions {
   method?: string
   body?: unknown
-  auth?: boolean // por defecto true
 }
 
 /** Petición JSON al backend. Devuelve el cuerpo parseado (o null en 204). */
@@ -62,17 +48,14 @@ export async function apiFetch<T = unknown>(
   path: string,
   opts: FetchOptions = {},
 ): Promise<T> {
-  const { method = 'GET', body, auth = true } = opts
+  const { method = 'GET', body } = opts
   const headers: Record<string, string> = {}
   if (body !== undefined) headers['Content-Type'] = 'application/json'
-  if (auth) {
-    const token = getToken()
-    if (token) headers['Authorization'] = `Bearer ${token}`
-  }
 
   const res = await fetch(`${API_URL}${path}`, {
     method,
     headers,
+    credentials: 'include', // manda la cookie httpOnly de sesión
     body: body !== undefined ? JSON.stringify(body) : undefined,
   })
 
@@ -87,12 +70,12 @@ export async function apiUpload<T = unknown>(
   path: string,
   form: FormData,
 ): Promise<T> {
-  const headers: Record<string, string> = {}
-  const token = getToken()
-  if (token) headers['Authorization'] = `Bearer ${token}`
   // OJO: no seteamos Content-Type; el navegador pone el boundary.
-
-  const res = await fetch(`${API_URL}${path}`, { method: 'POST', headers, body: form })
+  const res = await fetch(`${API_URL}${path}`, {
+    method: 'POST',
+    credentials: 'include', // manda la cookie httpOnly de sesión
+    body: form,
+  })
   if (!res.ok) await parseError(res)
   const text = await res.text()
   return (text ? JSON.parse(text) : null) as T

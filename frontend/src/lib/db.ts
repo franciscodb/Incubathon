@@ -3,7 +3,7 @@
 // Todas las funciones llaman al backend FastAPI (que usa Supabase).
 // La UI consume estas funciones y no sabe nada del transporte HTTP.
 // =====================================================================
-import { apiFetch, apiUpload, setToken, clearToken, getToken } from './api'
+import { apiFetch, apiUpload } from './api'
 import { CATALOG } from '../data/catalog'
 import type { BillingInterval, Quote } from './pricing'
 import type {
@@ -67,7 +67,6 @@ function toProfile(u: BackendUser): Profile {
 export async function register(input: AuthInput): Promise<Profile> {
   const res = await apiFetch<AuthResponse>('/auth/register', {
     method: 'POST',
-    auth: false,
     body: {
       email: input.email,
       password: input.password,
@@ -75,17 +74,15 @@ export async function register(input: AuthInput): Promise<Profile> {
       role: input.role ?? 'business_owner',
     },
   })
-  setToken(res.access_token)
+  // La cookie httpOnly de sesión ya la puso el backend (Set-Cookie).
   return toProfile(res.user)
 }
 
 export async function login(input: AuthInput): Promise<Profile> {
   const res = await apiFetch<AuthResponse>('/auth/login', {
     method: 'POST',
-    auth: false,
     body: { email: input.email, password: input.password },
   })
-  setToken(res.access_token)
   return toProfile(res.user)
 }
 
@@ -95,19 +92,22 @@ export async function loginDemo(): Promise<Profile> {
 }
 
 export async function logout(): Promise<void> {
-  clearToken()
+  await apiFetch('/auth/logout', { method: 'POST' })
 }
 
 export async function getCurrentProfile(): Promise<Profile | null> {
-  if (!getToken()) return null
   try {
     const u = await apiFetch<BackendUser>('/auth/me')
     return toProfile(u)
   } catch {
-    // Token inválido / expirado → sesión limpia
-    clearToken()
+    // Sin cookie de sesión / token inválido o expirado.
     return null
   }
+}
+
+/** True si el navegador ya trae una cookie de sesión válida (post-registro). */
+export async function hasActiveSession(): Promise<boolean> {
+  return (await getCurrentProfile()) !== null
 }
 
 // =====================================================================
