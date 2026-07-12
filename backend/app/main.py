@@ -33,8 +33,10 @@ app = FastAPI(
 )
 
 # --- CORS ---
-# Permite el origen del frontend (o '*' en demo). Con credenciales, métodos y
-# headers abiertos para facilitar la integración durante el hackathon.
+# La sesión viaja en una cookie httpOnly (ver deps.ACCESS_TOKEN_COOKIE), así
+# que allow_credentials=True es obligatorio y FRONTEND_ORIGIN NO puede quedar
+# en '*' (los navegadores rechazan credentials + wildcard): hay que listar
+# el/los orígenes reales del frontend.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
